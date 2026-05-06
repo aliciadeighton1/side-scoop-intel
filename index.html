@@ -1,240 +1,324 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Side Scoop - Market Intel</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React and ReactDOM -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    <!-- Babel for JSX -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@400;700;900&display=swap');
-        body { font-family: 'M PLUS 1', sans-serif; }
-    </style>
-</head>
-<body>
-    <div id="root"></div>
+import React, { useState, useEffect } from 'react';
+import { 
+  TrendingUp, TrendingDown, Newspaper, Zap, Target, 
+  ArrowUpRight, ArrowDownRight, Info, Instagram, 
+  RefreshCw, Cpu, Bitcoin, BarChart3, AlertTriangle, 
+  Flame, Skull, Lightbulb, ExternalLink, Activity,
+  Eye, ListOrdered, MoveUp, X, Clock, ShieldCheck, Gauge
+} from 'lucide-react';
 
-    <script type="text/babel">
-        // Destructure hooks from React
-        const { useState, useEffect } = React;
+const SideScoopTracker = () => {
+  const [activeTab, setActiveTab] = useState('bull');
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [selectedItem, setSelectedItem] = useState(null);
 
-        // Create Lucide Icon Component to work with the CDN
-        const Icon = ({ name, className }) => {
-            const [iconHtml, setIconHtml] = React.useState('');
-            React.useEffect(() => {
-                const icon = lucide.icons[name];
-                if (icon) {
-                    const svg = lucide.createIcons({
-                        icons: { [name]: icon },
-                        attrs: { class: className }
-                    });
-                }
-            }, [name, className]);
+  useEffect(() => {
+    const now = new Date();
+    setLastUpdated(now.toLocaleDateString('en-GB') + ' | ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+  }, []);
+
+  const colors = {
+    core: '#EEEEED',
+    primary: '#C58662',
+    secondary: '#FFF8F8',
+    tertiary: '#8EA77A',
+    black: '#1A1A1A',
+    grey: '#71717A'
+  };
+
+  const watchList = [
+    { id: 1, name: "UGC Content Creator", volume: "High", trend: "Stable", sentiment: "Bullish", difficulty: "Medium", timeToPay: "2-4 Weeks", risk: "Low", description: "Creating authentic content for brands. Demand is shifting from 'influencers' to 'creators' who can produce relatable video ads for TikTok and Reels." },
+    { id: 2, name: "Virtual Bookkeeping", volume: "Medium", trend: "Rising", sentiment: "Bullish", difficulty: "High", timeToPay: "1-2 Months", risk: "Very Low", description: "Helping small businesses manage their books remotely. Requires certification but offers long-term recurring revenue." },
+    { id: 3, name: "AI Prompt Engineering", volume: "High", trend: "Volatile", sentiment: "Bullish", difficulty: "Medium", timeToPay: "1 Week", risk: "High", description: "Optimizing AI outputs for businesses. Highly lucrative but the technology is evolving daily, requiring constant upskilling." },
+    { id: 4, name: "Short-Term Rental Mgmt", volume: "Medium", trend: "Falling", sentiment: "Bearish", difficulty: "Medium", timeToPay: "1-2 Months", risk: "Medium", description: "Managing Airbnbs for owners. Facing regulatory headwinds in major cities, leading to a market contraction." },
+    { id: 5, name: "Notary Public (Remote)", volume: "Stable", trend: "Steady", sentiment: "Neutral", difficulty: "Medium", timeToPay: "1 Month", risk: "Low", description: "Digitally notarizing legal documents. Stable, government-regulated income with low volatility." },
+    { id: 6, name: "Print on Demand (Niche)", volume: "High", trend: "Rising", sentiment: "Bullish", difficulty: "Low", timeToPay: "2-6 Weeks", risk: "Medium", description: "Selling custom designs on products. Success now requires deep niche focus (e.g., 'Retro fishing enthusiasts') rather than general designs." },
+    { id: 7, name: "Newsletter Curating", volume: "Low", trend: "Exploding", sentiment: "Bullish", difficulty: "High", timeToPay: "3-6 Months", risk: "Medium", description: "Building a niche audience via email. High asset value once scaled; the 'new media' gold rush of 2026." },
+    { id: 8, name: "SEO Audit Freelancing", volume: "Medium", trend: "Steady", sentiment: "Neutral", difficulty: "High", timeToPay: "2-4 Weeks", risk: "Low", description: "Technical SEO audits for e-commerce. AI is changing search, so experts who understand 'Search Generative Experience' are in high demand." },
+    { id: 9, name: "Pet Sitting (Premium)", volume: "Medium", trend: "Rising", sentiment: "Bullish", difficulty: "Low", timeToPay: "1 Week", risk: "Very Low", description: "High-end pet care for traveling professionals. A massive resurgence in physical service demand." },
+    { id: 10, name: "Social Media Management", volume: "High", trend: "Saturated", sentiment: "Bearish", difficulty: "Medium", timeToPay: "2-4 Weeks", risk: "Medium", description: "Managing brand accounts. Pricing power is dropping as AI tools make basic management faster and cheaper." },
+  ];
+
+  const movers = [
+    { id: 11, name: "AI Voice Cloning Agency", change: "+142%", type: "New Entry", sentiment: "Bullish", difficulty: "High", timeToPay: "2 Weeks", risk: "High", description: "Using ElevenLabs or similar to clone founder voices for localized global content. High technical barrier, massive ROI." },
+    { id: 12, name: "Domain Flipping (AI TLDs)", change: "+89%", type: "Return", sentiment: "Bullish", difficulty: "Low", timeToPay: "Instant to Years", risk: "Very High", description: "Speculating on .ai and .io domains. Recent sales show 300% premiums on 'agentic' keyword domains." },
+    { id: 13, name: "Etsy Digital Downloads", change: "-22%", type: "Saturation", sentiment: "Bearish", difficulty: "Low", timeToPay: "1 Week", risk: "Low", description: "Basic digital planners are now being undercut by AI-generated freebies. Pivot to high-utility complex spreadsheets is needed." },
+  ];
+
+  const marketData = {
+    bull: [
+      { 
+        id: 21, 
+        title: "AI Agent Implementation", 
+        ticker: "AIAG",
+        status: "High Growth", 
+        roi: "72%", 
+        marketCap: "$1.49B",
+        graph: [20, 35, 45, 60, 85, 95],
+        news: "Enterprise-grade 'Context Design' is replacing simple chatbots. The move from chat to autonomous action is where the money is moving.",
+        link: "https://www.researchandmarkets.com",
+        instaHook: "AI Agents > Chatbots. Businesses are paying $5k/mo to automate themselves out of admin tasks. 🤖",
+        category: "Tech",
+        difficulty: "High",
+        timeToPay: "2-4 Weeks",
+        risk: "Medium",
+        description: "Specialized consulting where you don't just 'use' AI, you build workflows where AI works on its own (agents). This is the #1 highest-paying digital skill this quarter."
+      },
+      { 
+        id: 22, 
+        title: "Mobile Detailing & Protection", 
+        ticker: "AUTO",
+        status: "Stable Bull", 
+        roi: "35%", 
+        marketCap: "$459B",
+        graph: [50, 55, 52, 58, 65, 72],
+        news: "High-end ceramic coating and waterless detailing are the 2026 winners. Lower overhead, higher ticket prices.",
+        link: "https://www.futuremarketinsights.com",
+        instaHook: "This 'dirty' side hustle is a $450 Billion gold mine. Here's why ceramic coating is the trend to watch. 🧼",
+        category: "Services",
+        difficulty: "Low",
+        timeToPay: "1-3 Days",
+        risk: "Low",
+        description: "A physical service hustle with zero software risk. Mobile units that specialize in 'luxury protection' are outperforming traditional car washes by 4x in profit margin."
+      }
+    ],
+    bear: [
+      { 
+        id: 23, 
+        title: "Traditional Dropshipping", 
+        ticker: "DROP",
+        status: "Correction", 
+        roi: "-15%", 
+        marketCap: "Shrinking",
+        graph: [80, 75, 60, 45, 30, 22],
+        news: "Tariff adjustments in May 2026 have killed margins for overseas shipping. Local warehousing is now mandatory for survival.",
+        link: "https://www.lendingtree.com",
+        instaHook: "Dropshipping margins just hit zero. 🛑 New laws made it impossible for beginners. Pivot now.",
+        category: "E-com",
+        difficulty: "Medium",
+        timeToPay: "1-3 Months",
+        risk: "High",
+        description: "The classic 'buy low, sell high' from China model is broken. Between rising shipping costs and new US/EU import taxes, the barrier to entry has become a barrier to profit."
+      }
+    ],
+    newsFlash: [
+      { id: 31, type: "AI", title: "OpenAI 'Search' Integration", sentiment: "Bullish", desc: "OpenAI is reportedly launching a direct Google competitor, shifting SEO to 'AIO' (AI Optimization).", link: "#" },
+      { id: 32, type: "Stocks", title: "Data Center REITs Surge", sentiment: "Bullish", desc: "Energy demand for AI training sends infrastructure stocks to all-time highs.", link: "#" },
+      { id: 33, type: "Crypto", title: "Ethereum L2 Consolidation", sentiment: "Neutral", desc: "Gas fees at record lows as ZK-rollups become the industry standard for commerce.", link: "#" }
+    ]
+  };
+
+  const MiniGraph = ({ data, color }) => (
+    <div className="flex items-end gap-1 h-12 w-24">
+      {data && data.map((val, i) => (
+        <div key={i} className="w-2 rounded-t-sm transition-all" style={{ height: `${val}%`, backgroundColor: color, opacity: (i + 1) / data.length }} />
+      ))}
+    </div>
+  );
+
+  const currentListData = marketData[activeTab] || [];
+
+  return (
+    <div className="min-h-screen bg-[#FDFDFD] text-[#1A1A1A] p-4 md:p-8 font-sans selection:bg-[#C58662]/20 relative">
+      
+      {/* Modal Overlay */}
+      {selectedItem && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedItem(null)} />
+          <div className="relative bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-[#FDFDFD]">
+              <div>
+                <span className="text-[10px] font-black text-[#C58662] uppercase tracking-widest">
+                  {selectedItem.type || selectedItem.category || "Market Brief"}
+                </span>
+                <h2 className="text-3xl font-black tracking-tight">{selectedItem.name || selectedItem.title}</h2>
+              </div>
+              <button onClick={() => setSelectedItem(null)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
             
-            // Fallback since lucide.createIcons handles DOM directly
-            // We'll use a safer approach for React
-            const LucideIcon = ({ iconName, ...props }) => {
-                const IconComponent = () => {
-                    const svgString = lucide.icons[iconName];
-                    return <span dangerouslySetInnerHTML={{ __html: svgString }} />;
-                };
-            };
-        };
-
-        // Standard Lucide icons often need a wrapper for React CDN usage
-        // To ensure 100% reliability in a single HTML file, we use inline SVGs 
-        // for the core elements that match the original look.
-
-        const SideScoopTracker = () => {
-            const [activeTab, setActiveTab] = useState('bull');
-            const [lastUpdated, setLastUpdated] = useState('');
-            const [selectedItem, setSelectedItem] = useState(null);
-
-            useEffect(() => {
-                const now = new Date();
-                setLastUpdated(now.toLocaleDateString('en-GB') + ' | ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-            }, []);
-
-            const colors = {
-                core: '#EEEEED',
-                primary: '#C58662',
-                secondary: '#FFF8F8',
-                tertiary: '#8EA77A',
-                black: '#1A1A1A',
-                grey: '#71717A'
-            };
-
-            const watchList = [
-                { id: 1, name: "UGC Content Creator", volume: "High", trend: "Stable", sentiment: "Bullish", difficulty: "Medium", timeToPay: "2-4 Weeks", risk: "Low", description: "Creating authentic content for brands. Demand is shifting from 'influencers' to 'creators' who can produce relatable video ads for TikTok and Reels." },
-                { id: 2, name: "Virtual Bookkeeping", volume: "Medium", trend: "Rising", sentiment: "Bullish", difficulty: "High", timeToPay: "1-2 Months", risk: "Very Low", description: "Helping small businesses manage their books remotely. Requires certification but offers long-term recurring revenue." },
-                { id: 3, name: "AI Prompt Engineering", volume: "High", trend: "Volatile", sentiment: "Bullish", difficulty: "Medium", timeToPay: "1 Week", risk: "High", description: "Optimizing AI outputs for businesses. Highly lucrative but the technology is evolving daily, requiring constant upskilling." },
-                { id: 4, name: "Short-Term Rental Mgmt", volume: "Medium", trend: "Falling", sentiment: "Bearish", difficulty: "Medium", timeToPay: "1-2 Months", risk: "Medium", description: "Managing Airbnbs for owners. Facing regulatory headwinds in major cities, leading to a market contraction." },
-                { id: 5, name: "Notary Public (Remote)", volume: "Stable", trend: "Steady", sentiment: "Neutral", difficulty: "Medium", timeToPay: "1 Month", risk: "Low", description: "Digitally notarizing legal documents. Stable, government-regulated income with low volatility." }
-            ];
-
-            const movers = [
-                { id: 11, name: "AI Voice Cloning Agency", change: "+142%", type: "New Entry", difficulty: "High", timeToPay: "2 Weeks", risk: "High", description: "Using ElevenLabs or similar to clone founder voices for localized global content." },
-                { id: 12, name: "Domain Flipping (AI TLDs)", change: "+89%", type: "Return", difficulty: "Low", timeToPay: "Instant", risk: "Very High", description: "Speculating on .ai and .io domains." }
-            ];
-
-            const marketData = {
-                bull: [
-                    { 
-                        id: 21, 
-                        title: "AI Agent Implementation", 
-                        ticker: "AIAG",
-                        roi: "72%", 
-                        graph: [20, 35, 45, 60, 85, 95],
-                        news: "Enterprise-grade 'Context Design' is replacing simple chatbots.",
-                        instaHook: "AI Agents > Chatbots. Businesses pay $5k/mo to automate tasks. 🤖",
-                        category: "Tech",
-                        difficulty: "High",
-                        timeToPay: "2-4 Weeks",
-                        risk: "Medium",
-                        description: "Specialized consulting where you build autonomous AI workflows."
-                    },
-                    { 
-                        id: 22, 
-                        title: "Mobile Detailing & Protection", 
-                        ticker: "AUTO",
-                        roi: "35%", 
-                        graph: [50, 55, 52, 58, 65, 72],
-                        news: "High-end ceramic coating and waterless detailing are the 2026 winners.",
-                        instaHook: "This 'dirty' side hustle is a $450 Billion gold mine. 🧼",
-                        category: "Services",
-                        difficulty: "Low",
-                        timeToPay: "1-3 Days",
-                        risk: "Low",
-                        description: "Luxury protection for vehicles with high profit margins."
-                    }
-                ],
-                bear: [
-                    { 
-                        id: 23, 
-                        title: "Traditional Dropshipping", 
-                        ticker: "DROP",
-                        roi: "-15%", 
-                        graph: [80, 75, 60, 45, 30, 22],
-                        news: "Tariff adjustments have killed margins for overseas shipping.",
-                        instaHook: "Dropshipping margins just hit zero. 🛑 Pivot now.",
-                        category: "E-com",
-                        difficulty: "Medium",
-                        timeToPay: "1-3 Months",
-                        risk: "High",
-                        description: "Standard dropshipping from China is becoming non-viable due to new taxes."
-                    }
-                ],
-                newsFlash: [
-                    { id: 31, type: "AI", title: "OpenAI 'Search' Integration", sentiment: "Bullish", desc: "OpenAI is launching a direct Google competitor." },
-                    { id: 32, type: "Stocks", title: "Data Center REITs Surge", sentiment: "Bullish", desc: "Energy demand for AI training sends infrastructure stocks to ATH." }
-                ]
-            };
-
-            return (
-                <div className="min-h-screen bg-[#FDFDFD] text-[#1A1A1A] p-4 md:p-8 font-sans relative">
-                    
-                    {/* Modal */}
-                    {selectedItem && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSelectedItem(null)} />
-                            <div className="relative bg-white w-full max-w-xl rounded-[2.5rem] shadow-2xl overflow-hidden">
-                                <div className="p-8 border-b border-slate-100 flex justify-between items-center">
-                                    <div>
-                                        <span className="text-[10px] font-black text-[#C58662] uppercase tracking-widest">{selectedItem.type || selectedItem.category || "Brief"}</span>
-                                        <h2 className="text-3xl font-black">{selectedItem.name || selectedItem.title}</h2>
-                                    </div>
-                                    <button onClick={() => setSelectedItem(null)} className="p-2 bg-slate-100 rounded-full">✕</button>
-                                </div>
-                                <div className="p-8 space-y-6">
-                                    <div className="grid grid-cols-3 gap-4">
-                                        <div className="bg-[#EEEEED] p-4 rounded-2xl text-center">
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase">Difficulty</p>
-                                            <p className="text-sm font-black">{selectedItem.difficulty || 'N/A'}</p>
-                                        </div>
-                                        <div className="bg-[#EEEEED] p-4 rounded-2xl text-center">
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase">Time To $</p>
-                                            <p className="text-sm font-black">{selectedItem.timeToPay || 'N/A'}</p>
-                                        </div>
-                                        <div className="bg-[#EEEEED] p-4 rounded-2xl text-center">
-                                            <p className="text-[10px] font-bold text-slate-400 uppercase">Risk</p>
-                                            <p className="text-sm font-black">{selectedItem.risk || 'N/A'}</p>
-                                        </div>
-                                    </div>
-                                    <p className="text-slate-600 font-medium leading-relaxed">{selectedItem.description || selectedItem.news || selectedItem.desc}</p>
-                                    {selectedItem.instaHook && (
-                                        <div className="bg-black text-white p-4 rounded-2xl italic font-bold">"{selectedItem.instaHook}"</div>
-                                    )}
-                                    <button onClick={() => setSelectedItem(null)} className="w-full bg-[#C58662] text-white py-4 rounded-2xl font-black">CLOSE</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    <div className="max-w-7xl mx-auto space-y-8">
-                        <header className="flex flex-col md:flex-row justify-between items-end border-b pb-8 gap-4">
-                            <div>
-                                <span className="bg-[#C58662] text-white text-[10px] font-bold px-2 py-1 rounded">MAY 2026</span>
-                                <h1 className="text-5xl font-black tracking-tighter">THE SIDE <span className="text-[#C58662]">SCOOP</span></h1>
-                            </div>
-                            <div className="flex gap-2">
-                                <button onClick={() => setActiveTab('bull')} className={`px-6 py-2 rounded-full font-bold ${activeTab === 'bull' ? 'bg-[#8EA77A] text-white' : 'bg-[#EEEEED]'}`}>Market Bulls</button>
-                                <button onClick={() => setActiveTab('bear')} className={`px-6 py-2 rounded-full font-bold ${activeTab === 'bear' ? 'bg-[#C58662] text-white' : 'bg-[#EEEEED]'}`}>Market Bears</button>
-                            </div>
-                        </header>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                            <div className="lg:col-span-3 space-y-8">
-                                <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100">
-                                    <h3 className="text-xs font-black text-slate-400 uppercase mb-4">Watch List</h3>
-                                    {watchList.map(item => (
-                                        <div key={item.id} className="flex justify-between py-2 cursor-pointer hover:text-[#C58662]" onClick={() => setSelectedItem(item)}>
-                                            <span className="text-xs font-bold">{item.name}</span>
-                                            <span className="text-[10px] font-black uppercase text-green-600">{item.sentiment}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="lg:col-span-6 space-y-6">
-                                {marketData[activeTab].map(item => (
-                                    <div key={item.id} className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 cursor-pointer hover:border-[#C58662] transition-all" onClick={() => setSelectedItem(item)}>
-                                        <div className="flex justify-between items-center mb-4">
-                                            <span className="text-[#C58662] font-black text-xl">{item.ticker}</span>
-                                            <span className="text-lg font-black text-[#8EA77A]">{item.roi} ROI</span>
-                                        </div>
-                                        <h2 className="text-2xl font-black mb-2">{item.title}</h2>
-                                        <p className="text-sm text-slate-500 mb-4">{item.news}</p>
-                                        <span className="text-[10px] font-black uppercase text-[#C58662]">View Analysis →</span>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div className="lg:col-span-3">
-                                <div className="bg-[#1A1A1A] text-white p-8 rounded-[2.5rem] h-full">
-                                    <h3 className="text-amber-400 font-black text-xs uppercase mb-6">Market Pulse</h3>
-                                    {marketData.newsFlash.map(news => (
-                                        <div key={news.id} className="mb-6 pb-6 border-b border-white/10 cursor-pointer" onClick={() => setSelectedItem(news)}>
-                                            <span className="text-[10px] text-slate-400 uppercase">{news.type}</span>
-                                            <h4 className="font-bold text-sm">{news.title}</h4>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div className="p-8 space-y-8">
+              {/* Quick Metrics */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-[#EEEEED] p-4 rounded-2xl text-center">
+                  <Gauge className="w-4 h-4 mx-auto mb-1 text-slate-500" />
+                  <p className="text-[10px] font-bold text-slate-400 uppercase">Difficulty</p>
+                  <p className="text-sm font-black">{selectedItem.difficulty || 'N/A'}</p>
                 </div>
-            );
-        };
+                <div className="bg-[#EEEEED] p-4 rounded-2xl text-center">
+                  <Clock className="w-4 h-4 mx-auto mb-1 text-slate-500" />
+                  <p className="text-[10px] font-bold text-slate-400 uppercase">Time To $</p>
+                  <p className="text-sm font-black">{selectedItem.timeToPay || 'N/A'}</p>
+                </div>
+                <div className="bg-[#EEEEED] p-4 rounded-2xl text-center">
+                  <ShieldCheck className="w-4 h-4 mx-auto mb-1 text-slate-500" />
+                  <p className="text-[10px] font-bold text-slate-400 uppercase">Risk Level</p>
+                  <p className="text-sm font-black">{selectedItem.risk || 'N/A'}</p>
+                </div>
+              </div>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<SideScoopTracker />);
-    </script>
-</body>
-</html>
+              <div className="space-y-4">
+                <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Market Analysis</h4>
+                <p className="text-slate-600 leading-relaxed font-medium">{selectedItem.description || selectedItem.news || selectedItem.desc}</p>
+              </div>
+
+              {selectedItem.instaHook && (
+                <div className="bg-[#1A1A1A] p-6 rounded-3xl">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Instagram className="w-4 h-4 text-white/50" />
+                    <span className="text-[10px] font-black text-white/50 uppercase">Ready-to-use IG Hook</span>
+                  </div>
+                  <p className="text-white font-bold italic">"{selectedItem.instaHook}"</p>
+                </div>
+              )}
+            </div>
+            <div className="px-8 pb-8">
+              <button onClick={() => setSelectedItem(null)} className="w-full bg-[#C58662] text-white py-4 rounded-2xl font-black text-sm shadow-lg shadow-[#C58662]/20 hover:scale-[1.02] active:scale-95 transition-all">
+                CLOSE BRIEF
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header Section */}
+        <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 pb-8">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="bg-[#C58662] text-white text-[10px] font-bold px-2 py-1 rounded">MAY 2026 EDITION</span>
+              <span className="text-slate-400 text-xs font-medium uppercase tracking-widest">{lastUpdated}</span>
+            </div>
+            <h1 className="text-5xl font-black tracking-tighter">
+              THE SIDE <span style={{ color: colors.primary }}>SCOOP</span>
+            </h1>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => setActiveTab('bull')} className={`px-6 py-3 rounded-full font-bold transition-all flex items-center gap-2 ${activeTab === 'bull' ? 'bg-[#8EA77A] text-white shadow-lg' : 'bg-[#EEEEED] text-slate-600'}`}>
+              <TrendingUp className="w-4 h-4" /> Market Bulls
+            </button>
+            <button onClick={() => setActiveTab('bear')} className={`px-6 py-3 rounded-full font-bold transition-all flex items-center gap-2 ${activeTab === 'bear' ? 'bg-[#C58662] text-white shadow-lg' : 'bg-[#EEEEED] text-slate-600'}`}>
+              <TrendingDown className="w-4 h-4" /> Market Bears
+            </button>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Column 1: Watch List & Movers */}
+          <div className="lg:col-span-3 space-y-8">
+            <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm">
+              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2 mb-6">
+                <ListOrdered className="w-4 h-4" /> Top 10 Watch List
+              </h3>
+              <div className="space-y-4">
+                {watchList.map((item, idx) => (
+                  <div 
+                    key={item.id} 
+                    className="flex items-center justify-between group cursor-pointer"
+                    onClick={() => setSelectedItem(item)}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-bold text-slate-300">{(idx + 1).toString().padStart(2, '0')}</span>
+                      <p className="text-xs font-bold text-slate-700 group-hover:text-[#C58662] transition-colors">{item.name}</p>
+                    </div>
+                    <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${item.sentiment === 'Bullish' ? 'bg-green-100 text-green-700' : item.sentiment === 'Bearish' ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-500'}`}>
+                      {item.sentiment}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-[#FFF8F8] p-6 rounded-[2rem] border border-[#C58662]/10">
+              <h3 className="text-xs font-black text-[#C58662] uppercase tracking-widest flex items-center gap-2 mb-6">
+                <MoveUp className="w-4 h-4" /> Today's Movers
+              </h3>
+              <div className="space-y-6">
+                {movers.map((mover) => (
+                  <div key={mover.id} className="space-y-1 cursor-pointer group" onClick={() => setSelectedItem(mover)}>
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm font-black group-hover:text-[#C58662] transition-colors">{mover.name}</p>
+                      <span className={`text-xs font-black ${mover.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>{mover.change}</span>
+                    </div>
+                    <p className="text-[10px] text-slate-500 leading-tight">{mover.note}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Column 2: Deep Dive */}
+          <div className="lg:col-span-6 space-y-6">
+            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+              <Activity className="w-4 h-4" /> Deep Dive Analysis
+            </h3>
+            {currentListData.map((item) => (
+              <div key={item.id} className="bg-white rounded-[2rem] p-8 border border-slate-100 shadow-sm hover:shadow-md transition-all cursor-pointer group" onClick={() => setSelectedItem(item)}>
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-[#C58662] font-black text-xl">{item.ticker}</span>
+                      <span className="text-[10px] font-bold text-slate-400 px-2 py-1 bg-slate-50 rounded-lg">{item.category}</span>
+                    </div>
+                    <h2 className="text-2xl font-black tracking-tight group-hover:text-[#C58662] transition-colors">{item.title}</h2>
+                  </div>
+                  <div className="bg-slate-50 p-3 rounded-xl flex items-center gap-3">
+                    <div className="text-right">
+                      <p className="text-[9px] font-black text-slate-400 uppercase leading-none">ROI Estimate</p>
+                      <p className={`text-lg font-black ${activeTab === 'bull' ? 'text-[#8EA77A]' : 'text-[#C58662]'}`}>{item.roi}</p>
+                    </div>
+                    <MiniGraph data={item.graph} color={activeTab === 'bull' ? colors.tertiary : colors.primary} />
+                  </div>
+                </div>
+                <p className="text-sm text-slate-600 leading-relaxed mb-6 font-medium line-clamp-3">{item.news}</p>
+                <div className="flex items-center gap-2 text-[#C58662] font-black text-[10px] uppercase tracking-tighter">
+                  View Full Brief <ArrowUpRight className="w-3 h-3" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Column 3: Pulse & News */}
+          <div className="lg:col-span-3 space-y-6">
+            <div className="bg-[#1A1A1A] text-white p-8 rounded-[2.5rem] relative overflow-hidden h-full">
+              <h3 className="text-amber-400 font-black text-xs tracking-widest uppercase mb-8 flex items-center gap-2">
+                <Zap className="w-4 h-4 fill-amber-400" /> Market Pulse
+              </h3>
+              <div className="space-y-8">
+                {marketData?.newsFlash?.map((news) => (
+                  <div key={news.id} className="group cursor-pointer" onClick={() => setSelectedItem(news)}>
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-[9px] font-bold text-slate-400 uppercase">{String(news.type)}</span>
+                      <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${news.sentiment === 'Bullish' ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'}`}>
+                        {String(news.sentiment)}
+                      </span>
+                    </div>
+                    <h4 className="font-bold text-sm leading-tight group-hover:text-[#C58662] transition-colors mb-2">{String(news.title)}</h4>
+                    <p className="text-xs text-slate-400 line-clamp-2">{String(news.desc)}</p>
+                    <div className="h-px bg-white/10 mt-6" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Brand Strategy Note */}
+        <div className="bg-[#EEEEED] p-6 rounded-[2rem] flex items-center justify-between gap-6 border border-white">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-white rounded-2xl shadow-sm">
+              <Target className="w-6 h-6 text-[#C58662]" />
+            </div>
+            <div>
+              <p className="text-xs font-black text-slate-400 uppercase">Brand Strategy: May 2026</p>
+              <p className="text-sm font-medium text-slate-700">Click any card to open a <strong>Market Brief</strong>. For your daily update, focus on the 'Time to $' metric—it's what your audience cares about most this month.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SideScoopTracker;
